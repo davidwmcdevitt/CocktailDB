@@ -51,6 +51,7 @@ class cocktailDB():
             self.g.add((drink_uri, drink.iba, Literal(obj['strIBA'])))
             self.g.add((drink_uri, drink.alcoholic, Literal(obj['strAlcoholic'])))
             self.g.add((drink_uri, drink.glass, Literal(obj['strGlass'])))
+            self.g.add((drink_uri, drink.instructions, Literal(obj['strInstructions'])))
             
             # add triples for the list of ingredients
             self.ingredients = obj['ingredients_string'].split(", ")
@@ -131,13 +132,14 @@ class cocktailDB():
     
       return finalDict
     
-    def getIngredients(self, input):
+  
+    def getIngredients(self,input):
     
       #empty input
       if len(input) == 0:
         return ("Please provide a valid input")
         
-      finalDict = {}
+      finalList = []
     
       #concatenate the input string to the query 
       filterStr = "?drink drink:name '" + str(input) + "' ."
@@ -153,11 +155,107 @@ class cocktailDB():
     
       results = self.g.query(query)
     
+      #instructions query
+      instructionsQuery = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+      SELECT DISTINCT ?instructions
+         WHERE {
+             ?drink drink:instructions ?instructions .
+          ''' + filterStr + '}'
+    
+      results2 = self.g.query(instructionsQuery)
+    
       if len(results) == 0:
         return("The drink does not exist")
       
       for i, row in enumerate(results):
-        finalDict[i] = str(row['ingredient'])
+        finalList.append(str(row['ingredient']+" \n "))
+      
+      #for i, row in enumerate(results2):
+        #finalList.append(str(row['instructions']))
+    
+      return finalList
+  
+    def getRecipe(self,input):
+    
+      #empty input
+      if len(input) == 0:
+        return ("Please provide a valid input")
+        
+      finalList = []
+    
+      #concatenate the input string to the query 
+      filterStr = "?drink drink:name '" + str(input) + "' ."
+    
+      #final query
+      query = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+      SELECT DISTINCT ?ingredient
+         WHERE {
+             ?drink drink:ingredient ?ingredient .
+          ''' + filterStr + '}'
+    
+      results = self.g.query(query)
+    
+      #instructions query
+      instructionsQuery = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+      SELECT DISTINCT ?instructions
+         WHERE {
+             ?drink drink:instructions ?instructions .
+          ''' + filterStr + '}'
+    
+      results2 = self.g.query(instructionsQuery)
+    
+      if len(results) == 0:
+        return("The drink does not exist")
+      
+      #for i, row in enumerate(results):
+        #finalList.append(str(row['ingredient']+" \n "))
+      
+      for i, row in enumerate(results2):
+        finalList.append(str(row['instructions']+" \n "))
+    
+      return finalList
+
+    
+    def getSpeceficDrink(self, drinkCategory, drinkType, glassType, containsIngredient):
+      
+
+      drinkCategory = "?drink drink:category '"+ drinkCategory + "' ." + "\n"
+      drinkType = "?drink drink:alcoholic '"+ drinkType + "' ."+ "\n"
+      glassType = "?drink drink:glass '"+ glassType + "' ."+ "\n"
+    
+      #Ingredient tuple
+      containsIngredientFinal = tuple(containsIngredient.lower().split(","))
+    
+      if len(containsIngredientFinal) == 1:
+        containsIngredient = '("' + str(containsIngredient) + '")'
+      
+      filterIngredient = "FILTER (?ingredient in " + str(containsIngredient) + ")"
+    
+      #final query
+      query = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+        SELECT DISTINCT ?name
+        WHERE {
+          ?drink drink:name ?name .
+          ''' + drinkCategory + drinkType + glassType + \
+          "?drink drink:ingredient ?ingredient ." + "\n" +\
+          filterIngredient + '}'
+    
+      results = self.g.query(query)
+    
+      finalDict = {}
+    
+      if len(results) == 0:
+        return("The drink does not exist")
+    
+      for i, row in enumerate(results):
+        finalDict[i] = str(row['name'])
     
       return finalDict
-
