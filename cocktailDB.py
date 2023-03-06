@@ -92,4 +92,72 @@ class cocktailDB():
         finalDict[i] = str(row['name'])
     
       return finalDict
+  
+    def getNonAlcoholicDrinkIngredient(self, input):
     
+      #empty input
+      if len(input) == 0:
+        return ("Please provide a valid input")
+    
+      #get the input string, lowercase it, and convert it to tuple
+      inputFinal = tuple(input.lower().split(","))
+    
+      if len(inputFinal) == 1:
+        inputFinal = '("' + str(input.lower()) + '")'
+        
+      finalDict = {}
+    
+      #concatenate the input string to the query 
+      filterStr = "FILTER (?ingredient in " + str(inputFinal) + ")"
+    
+      #final query
+      query = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+      SELECT DISTINCT ?name
+      WHERE {
+          ?drink drink:name ?name .
+          ?drink drink:alcoholic "Non alcoholic" .
+          ?drink drink:ingredient ?ingredient .
+          ''' + filterStr + '}'
+    
+      results = self.g.query(query)
+    
+      if len(results) == 0:
+        return("The drink does not exist")
+    
+      for i, row in enumerate(results):
+        finalDict[i] = str(row['name'])
+    
+      return finalDict
+    
+    def getIngredients(self, input):
+    
+      #empty input
+      if len(input) == 0:
+        return ("Please provide a valid input")
+        
+      finalDict = {}
+    
+      #concatenate the input string to the query 
+      filterStr = "?drink drink:name '" + str(input) + "' ."
+    
+      #final query
+      query = '''
+      PREFIX drink: <http://example.com/drink/>
+      
+      SELECT DISTINCT ?ingredient
+         WHERE {
+             ?drink drink:ingredient ?ingredient .
+          ''' + filterStr + '}'
+    
+      results = self.g.query(query)
+    
+      if len(results) == 0:
+        return("The drink does not exist")
+      
+      for i, row in enumerate(results):
+        finalDict[i] = str(row['ingredient'])
+    
+      return finalDict
+
