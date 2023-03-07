@@ -18,13 +18,13 @@ http://127.0.0.1:8050/
 
 Thank you and happy cocktailing!
 
-MSAI Group Whatever Number We Were
+### MSAI Group Whatever Number We Were
 
-Priyanka Aryal
+#### Priyanka Aryal
 
-David McDevitt
+#### David McDevitt
 
-Akangkshya Pathak
+#### Akangkshya Pathak
 
-Pranav Pawar
+#### Pranav Pawar
 
