@@ -380,7 +380,9 @@ app.layout = dbc.Container([
             html.H3("Ingredients"),
             html.Div(id="ingredients-output"),
             html.H3("Recipe"),
-            html.Div(id="recipe-output")
+            html.Div(id="recipe-output"),
+            html.H3("Missing Ingredients"),
+            html.Div(id="missing-output")
         ], md=4),
         dbc.Col([
             html.H3("Cocktail Ideas"),
@@ -432,7 +434,7 @@ def generate_ideas(n_clicks):
 @app.callback(Output("ingredients-output", "children"),
               [Input({"type": "recipe-button", "index": ALL}, "n_clicks")],
               [State({"type": "recipe-button", "index": ALL}, "id")])
-def get_recipe(n_clicks_list, button_ids):
+def get_ingredients(n_clicks_list, button_ids):
     if not any(n_clicks_list):
         # no buttons have been clicked yet
         return None
@@ -454,7 +456,7 @@ def get_recipe(n_clicks_list, button_ids):
 @app.callback(Output("recipe-output", "children"),
               [Input({"type": "recipe-button", "index": ALL}, "n_clicks")],
               [State({"type": "recipe-button", "index": ALL}, "id")])
-def get_recipe2(n_clicks_list, button_ids):
+def get_recipe(n_clicks_list, button_ids):
     if not any(n_clicks_list):
         # no buttons have been clicked yet
         return None
@@ -473,7 +475,45 @@ def get_recipe2(n_clicks_list, button_ids):
         return ingredients_str
     
        
+@app.callback(Output("missing-output", "children"),
+              [Input({"type": "recipe-button", "index": ALL}, "n_clicks")],
+              [State({"type": "recipe-button", "index": ALL}, "id")])
+def get_missing(n_clicks_list, button_ids):
+    if not any(n_clicks_list):
+        # no buttons have been clicked yet
+        return None
+    else:
+        # find the index of the button that was clicked
+        non_empty_clicks = [x for x in n_clicks_list if x is not None]
+        if not non_empty_clicks:
+            return None
+        button_index = n_clicks_list.index(max(non_empty_clicks))
+        button_id = button_ids[button_index]
+        key = button_id["index"]
+        needs = db.getIngredients(key)
+        
+        have = list(pantry.keys())
+        
+        upper_have = []
+        for i in have:
+            g = i.upper().strip()
+            g = g + " "
+            upper_have.append(g)
+            
+        upper_needs =[]    
+        for i in needs:
+            g = i.upper().strip()
+            g = g + " "
+            upper_needs.append(g)
+          
+            
+        print(repr(upper_have[0]))
+        print(repr(upper_needs[0]))
+        
+        missing_ingredients = [item for item in upper_needs if item not in upper_have]
 
+        return missing_ingredients
+    
 
 
 @app.callback(Output("dropdown-output", "children"),

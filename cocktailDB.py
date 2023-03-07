@@ -170,7 +170,7 @@ class cocktailDB():
         return("The drink does not exist")
       
       for i, row in enumerate(results):
-        finalList.append(str(row['ingredient']+" \n "))
+        finalList.append(str(row['ingredient']+" "))
       
       #for i, row in enumerate(results2):
         #finalList.append(str(row['instructions']))
