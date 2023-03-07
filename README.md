@@ -10,11 +10,7 @@ Final Project Winter Quarter 2023
 
 Before beginning, ensure that Dash is installed in your Python kernel:
 
-<html>
-<body>
-<p>pip install dash</p>
-</body>
-</html>
+`pip install -r requirements.txt `
 
 To launch CocktailDB, clone the repository and run 'app.py.' Once Dash HTML and CORE components have been imported (you should see a progress bar reach 100%), open a web broswer and navigate to the below URL to access the UI:
 
