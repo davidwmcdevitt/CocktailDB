@@ -1,8 +1,8 @@
-CS371
+## CS371
 
-Knowledge Representation and Reasoning
+## Knowledge Representation and Reasoning
 
-Final Project Winter Quarter 2023
+## Final Project Winter Quarter 2023
 
 
 
