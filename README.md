@@ -21,7 +21,10 @@ Thank you and happy cocktailing!
 MSAI Group Whatever Number We Were
 
 Priyanka Aryal
+
 David McDevitt
+
 Akangkshya Pathak
+
 Pranav Pawar
 
